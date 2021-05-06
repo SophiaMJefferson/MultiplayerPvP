@@ -11,6 +11,7 @@ namespace SDVMod1
     public class ModEntry : Mod
     {
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
+        //testing git change
 
         Farmer farmhand;
 
