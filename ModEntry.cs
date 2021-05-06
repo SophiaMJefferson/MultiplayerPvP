@@ -4,6 +4,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Tools; //enables referencing of Axe and Sword etc
 
 namespace SDVMod1
 {
@@ -13,11 +14,13 @@ namespace SDVMod1
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
 
         Farmer farmhand;
-        Farmer farmhand2;
-        Farmer farmhand3;
+        //Farmer farmhand2;
+        //Farmer farmhand3;
 
         Farmer[] farmarray = new Farmer[4];
         int i = 0;
+
+        static bool UsingToolOnPreviousTick = false;
 
         /*********
         ** Public methods
@@ -29,6 +32,8 @@ namespace SDVMod1
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.Player.InventoryChanged += this.Player_InventoryChanged; 
             helper.Events.Multiplayer.ModMessageReceived += OnModMessageReceived;
+            //helper.Events.Player.UpdateTicked += PlayerUsedTool;
+            helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
         }
 
         private void Player_InventoryChanged(object sender, InventoryChangedEventArgs e)
@@ -73,7 +78,7 @@ namespace SDVMod1
                     this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {player.currentLocation}", LogLevel.Debug);
                     this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
                 }
-                farmhand = farmarray[1];
+                farmhand = farmarray[1]; //this is a fix for testing
 
                 //send damage if in same location and within 1 tile
                 //TODO: Recognize using melee weapon to do damage
@@ -84,6 +89,17 @@ namespace SDVMod1
                     this.Helper.Multiplayer.SendMessage(message, "Damage");
                     this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
                 }                
+            }
+        }
+
+        //Works but recognizes scythe as a melee weapon
+        private void PlayerUsedTool(object sender, UpdateTickedEventArgs e) {
+            if (Game1.player.UsingTool != UsingToolOnPreviousTick) {
+                UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
+                this.Monitor.Log($"Just starting using a tool", LogLevel.Debug);
+                if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)) {
+                    this.Monitor.Log($"Just used Sword", LogLevel.Debug);
+                }
             }
         }
 
