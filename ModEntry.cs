@@ -11,9 +11,13 @@ namespace SDVMod1
     public class ModEntry : Mod
     {
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
-        //testing git change
 
         Farmer farmhand;
+        Farmer farmhand2;
+        Farmer farmhand3;
+
+        Farmer[] farmarray = new Farmer[4];
+        int i = 0;
 
         /*********
         ** Public methods
@@ -56,19 +60,25 @@ namespace SDVMod1
                 this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
                 //TODO: Add all farmhands
+                //Maximum four farmhands are in a farm
                 var players = Game1.getOnlineFarmers();
+                i = 0;
                 foreach (Farmer player in players)
                 {
                     this.Monitor.Log($"{player.Name} is in game.", LogLevel.Debug);
                     farmhand = player;
-                }
+                    farmarray[i] = player;
+                    i++;
 
-                this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {farmhand.currentLocation}", LogLevel.Debug);
-                this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {farmhand.getTileX()}", LogLevel.Debug);
+                    this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {player.currentLocation}", LogLevel.Debug);
+                    this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
+                }
+                farmhand = farmarray[1];
 
                 //send damage if in same location and within 1 tile
                 //TODO: Recognize using melee weapon to do damage
                 this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
+
                 if (Math.Abs(farmhand.getTileX() - Game1.player.getTileX()) <= 1 && farmhand.currentLocation == Game1.player.currentLocation) {
                     int message = 10;
                     this.Helper.Multiplayer.SendMessage(message, "Damage");
