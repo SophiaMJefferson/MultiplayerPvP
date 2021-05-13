@@ -81,7 +81,6 @@ namespace SDVMod1
                 farmhand = farmarray[1]; //this is a fix for testing
 
                 //send damage if in same location and within 1 tile
-                //TODO: Recognize using melee weapon to do damage
                 this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
 
                 if (Math.Abs(farmhand.getTileX() - Game1.player.getTileX()) <= 1 && farmhand.currentLocation == Game1.player.currentLocation) {
@@ -92,16 +91,18 @@ namespace SDVMod1
             }
         }
 
-        //Works but recognizes scythe as a melee weapon
+        //Method that detects when used weapon
         private void PlayerUsedTool(object sender, UpdateTickedEventArgs e) {
             if (Game1.player.UsingTool != UsingToolOnPreviousTick) {
                 UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
                 this.Monitor.Log($"Just starting using a tool", LogLevel.Debug);
-                if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)) {
-                    this.Monitor.Log($"Just used Sword", LogLevel.Debug);
+                if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)){ //Works but recognizes scythe as a melee weapon
+                    this.Monitor.Log($"Just used Melee Weapon", LogLevel.Debug);
                 }
             }
         }
+
+        //TODO: Calculate amount of damage to send(need weapon stats)
 
         private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e) {
             Game1.player.health -= 10;
