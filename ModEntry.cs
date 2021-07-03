@@ -14,9 +14,6 @@ namespace SDVMod1
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
 
         int playernum;
-        Farmer farmhand;
-        //Farmer farmhand2;
-        //Farmer farmhand3;
 
         Farmer[] farmarray = new Farmer[4];
         int i = 0;
@@ -66,13 +63,13 @@ namespace SDVMod1
                 this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
                 //TODO: Add all farmhands
+                //TODO: N needs to be pressed before damage can be sent. Fix this.
                 //Maximum four farmhands are in a farm
                 var players = Game1.getOnlineFarmers();
                 i = 0;
                 foreach (Farmer player in players)
                 {
                     this.Monitor.Log($"{player.Name} is in game.", LogLevel.Debug);
-                    farmhand = player;
                     farmarray[i] = player;
                     i++;
 
@@ -80,7 +77,6 @@ namespace SDVMod1
                     this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
                 }
                 playernum = i;
-                farmhand = farmarray[1]; //this is a fix for testing
 
                 this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
 
@@ -109,8 +105,9 @@ namespace SDVMod1
         }
 
         //TODO: Calculate amount of damage to send(need weapon stats)
-
+        
         private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e) {
+            this.Monitor.Log($"EventArgs {e}", LogLevel.Debug);
             Game1.player.health -= 10;
             this.Monitor.Log($"Received Damage", LogLevel.Debug);
             
