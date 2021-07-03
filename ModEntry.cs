@@ -32,8 +32,7 @@ namespace SDVMod1
             helper.Events.Multiplayer.ModMessageReceived += OnModMessageReceived;
             //helper.Events.Player.UpdateTicked += PlayerUsedTool;
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
-        }
-        
+
         //Raised after player makes a change to their inventory.
         private void Player_InventoryChanged(object sender, InventoryChangedEventArgs e)
         {
@@ -104,6 +103,7 @@ namespace SDVMod1
             if(Game1.player.Name == message){
                 Game1.player.health -= 10;
                 this.Monitor.Log($"Received Damage", LogLevel.Debug);
+                
             }
            
             
