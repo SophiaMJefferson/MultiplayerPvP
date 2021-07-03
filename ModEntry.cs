@@ -12,11 +12,11 @@ namespace SDVMod1
     public class ModEntry : Mod
     {
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
+        //TODO: Fix requirement that button must be pushed to update online players. Update every tick instead.
+        //TODO: Calculate amount of damage to send(need weapon stats)
 
-        int playernum;
-
-        Farmer[] farmarray = new Farmer[4];
-        int i = 0;
+        int playernum; //number of online players
+        Farmer[] farmarray = new Farmer[4]; //array of online players
 
         static bool UsingToolOnPreviousTick = false;
 
@@ -33,7 +33,8 @@ namespace SDVMod1
             //helper.Events.Player.UpdateTicked += PlayerUsedTool;
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
         }
-
+        
+        //Raised after player makes a change to their inventory.
         private void Player_InventoryChanged(object sender, InventoryChangedEventArgs e)
         {
             this.Monitor.Log($"{Game1.player.Name} has updated their inventory.", LogLevel.Debug);
@@ -52,36 +53,27 @@ namespace SDVMod1
             if (!Context.IsWorldReady)
                 return;
 
-            // print button presses to the console window
+            // print button presses to the console
             Game1.playSound("coin");
             Game1.player.stamina = 100;
             this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
-            //To check multiplayer status press N
-            if (e.Button == SButton.N) 
+            //Check who is in the farm and add them to an array
+            var players = Game1.getOnlineFarmers();
+            int i = 0;
+            foreach (Farmer player in players)
             {
-                this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
+                this.Monitor.Log($"{player.Name} is in game.", LogLevel.Debug);
+                farmarray[i] = player;
+                i++;
 
-                //TODO: Add all farmhands
-                //TODO: N needs to be pressed before damage can be sent. Fix this.
-                //Maximum four farmhands are in a farm
-                var players = Game1.getOnlineFarmers();
-                i = 0;
-                foreach (Farmer player in players)
-                {
-                    this.Monitor.Log($"{player.Name} is in game.", LogLevel.Debug);
-                    farmarray[i] = player;
-                    i++;
-
-                    this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {player.currentLocation}", LogLevel.Debug);
-                    this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
-                }
-                playernum = i;
-
-                this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
-
-               
+                //DEBUGGING PRINT STATEMENTS:
+                //this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {player.currentLocation}", LogLevel.Debug);
+                //this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
             }
+            playernum = i; 
+
+            //this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
         }
 
         //Method that detects when used weapon
@@ -104,8 +96,8 @@ namespace SDVMod1
             }
         }
 
-        //TODO: Calculate amount of damage to send(need weapon stats)
         
+        //Raised when any mod message is received.
         private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e) {
             string message = e.ReadAs<string>();
             this.Monitor.Log($"Damage Message sent to {message}", LogLevel.Debug);
