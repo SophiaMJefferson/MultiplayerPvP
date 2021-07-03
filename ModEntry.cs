@@ -95,8 +95,8 @@ namespace SDVMod1
                     for (int i=1; i<playernum;i++) { //iterate though other players online
                         if (Math.Abs(farmarray[i].getTileX() - Game1.player.getTileX()) <= 1 && farmarray[i].currentLocation == Game1.player.currentLocation) //send damage if in same location and within 1 tile
                         {
-                            int message = 10;
-                            this.Helper.Multiplayer.SendMessage(message, "Damage"); //TODO: who does it send the damage to? put target player name in message?
+                            string message = farmarray[i].Name; //message is the target player
+                            this.Helper.Multiplayer.SendMessage(message, "Damage"); 
                             this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
                         }
                     }
@@ -107,9 +107,13 @@ namespace SDVMod1
         //TODO: Calculate amount of damage to send(need weapon stats)
         
         private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e) {
-            this.Monitor.Log($"EventArgs {e}", LogLevel.Debug);
-            Game1.player.health -= 10;
-            this.Monitor.Log($"Received Damage", LogLevel.Debug);
+            string message = e.ReadAs<string>();
+            this.Monitor.Log($"Damage Message sent to {message}", LogLevel.Debug);
+            if(Game1.player.Name == message){
+                Game1.player.health -= 10;
+                this.Monitor.Log($"Received Damage", LogLevel.Debug);
+            }
+           
             
         }
 
