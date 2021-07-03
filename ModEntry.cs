@@ -80,14 +80,9 @@ namespace SDVMod1
                 }
                 farmhand = farmarray[1]; //this is a fix for testing
 
-                //send damage if in same location and within 1 tile
                 this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
 
-                if (Math.Abs(farmhand.getTileX() - Game1.player.getTileX()) <= 1 && farmhand.currentLocation == Game1.player.currentLocation) {
-                    int message = 10;
-                    this.Helper.Multiplayer.SendMessage(message, "Damage");
-                    this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
-                }                
+               
             }
         }
 
@@ -95,9 +90,15 @@ namespace SDVMod1
         private void PlayerUsedTool(object sender, UpdateTickedEventArgs e) {
             if (Game1.player.UsingTool != UsingToolOnPreviousTick) {
                 UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
-                this.Monitor.Log($"Just starting using a tool", LogLevel.Debug);
+                this.Monitor.Log($"Just used a tool", LogLevel.Debug);
                 if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)){ //Works but recognizes scythe as a melee weapon
                     this.Monitor.Log($"Just used Melee Weapon", LogLevel.Debug);
+                    if (Math.Abs(farmhand.getTileX() - Game1.player.getTileX()) <= 1 && farmhand.currentLocation == Game1.player.currentLocation) //send damage if in same location and within 1 tile
+                    {
+                        int message = 10;
+                        this.Helper.Multiplayer.SendMessage(message, "Damage");
+                        this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
+                    }
                 }
             }
         }
