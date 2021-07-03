@@ -13,6 +13,7 @@ namespace SDVMod1
     {
         //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
 
+        int playernum;
         Farmer farmhand;
         //Farmer farmhand2;
         //Farmer farmhand3;
@@ -59,7 +60,7 @@ namespace SDVMod1
             Game1.player.stamina = 100;
             this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
-            //To attack press N
+            //To check multiplayer status press N
             if (e.Button == SButton.N) 
             {
                 this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
@@ -78,6 +79,7 @@ namespace SDVMod1
                     this.Monitor.Log($"I am at{Game1.player.currentLocation}, and you are {player.currentLocation}", LogLevel.Debug);
                     this.Monitor.Log($"I am at {Game1.player.getTileX()}, and you are at {player.getTileX()}", LogLevel.Debug);
                 }
+                playernum = i;
                 farmhand = farmarray[1]; //this is a fix for testing
 
                 this.Monitor.Log($"getToolLocation gives {Game1.player.GetToolLocation()}", LogLevel.Debug);
@@ -91,13 +93,16 @@ namespace SDVMod1
             if (Game1.player.UsingTool != UsingToolOnPreviousTick) {
                 UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
                 this.Monitor.Log($"Just used a tool", LogLevel.Debug);
-                if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)){ //Works but recognizes scythe as a melee weapon
+                if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)){ 
                     this.Monitor.Log($"Just used Melee Weapon", LogLevel.Debug);
-                    if (Math.Abs(farmhand.getTileX() - Game1.player.getTileX()) <= 1 && farmhand.currentLocation == Game1.player.currentLocation) //send damage if in same location and within 1 tile
-                    {
-                        int message = 10;
-                        this.Helper.Multiplayer.SendMessage(message, "Damage");
-                        this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
+
+                    for (int i=1; i<playernum;i++) { //iterate though other players online
+                        if (Math.Abs(farmarray[i].getTileX() - Game1.player.getTileX()) <= 1 && farmarray[i].currentLocation == Game1.player.currentLocation) //send damage if in same location and within 1 tile
+                        {
+                            int message = 10;
+                            this.Helper.Multiplayer.SendMessage(message, "Damage"); //TODO: who does it send the damage to? put target player name in message?
+                            this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
+                        }
                     }
                 }
             }
