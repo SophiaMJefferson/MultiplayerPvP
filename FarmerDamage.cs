@@ -15,7 +15,10 @@ public class FarmerDamage
 	public FarmerDamage() {
 	}
 
+	//referenced whenever a player is damaged
 	public void HitEmote() {
 		Game1.player.performPlayerEmote("surprised");
+		Game1.playSound("crit");
+		Game1.player.health -= 1;
 	}
 }

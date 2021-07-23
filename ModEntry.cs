@@ -26,15 +26,14 @@ namespace SDVMod1
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static bool UsingToolOnPreviousTick = false;
         static bool gameloaded = false;
-        static int frametime = 1000;
+        static int frametime = 1000; //frametime is unused so far
         //List<TemporaryAnimatedSprite> sprites;
-        FarmerDamage Damage = new FarmerDamage();
+        FarmerDamage Damage = new FarmerDamage(); //used to control what happens when a farmer is damaged.
 
         /*********
         ** Public methods
         *********/
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        // The mod entry point, called after the mod is first loaded.
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
@@ -49,7 +48,7 @@ namespace SDVMod1
         /*********
         ** Private methods
         *********/
-        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        //Raised after the player presses a button on the keyboard, controller, or mouse.
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
@@ -62,9 +61,6 @@ namespace SDVMod1
             if (gameloaded) {
                 frametime -= 100;
             }
-            //if (frametime == 0) {
-                //Game1.player.stopShowingFrame(); //stop showing frame when timer is up.
-            //}
         }
                                                                                                                      
         //Raised after player makes a change to their inventory.
@@ -79,10 +75,6 @@ namespace SDVMod1
             if (!Context.IsWorldReady)
                 return;
 
-            // print button presses to the console
-            Game1.playSound("crit");
-            this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
-
             //Check who is in the farm and add them to an array
             var players = Game1.getOnlineFarmers();
             int i = 0;
@@ -96,16 +88,14 @@ namespace SDVMod1
             playernum = i;
             if (e.Button == SButton.N) {
                 Damage.HitEmote();
-                Junimo jun = new Junimo(new Vector2(Game1.player.getTileX()+Game1.random.Next(-2,2), Game1.player.getTileY()+Game1.random.Next(-2,2))*64, Game1.random.Next(7));
                 //Game1.multiplayer.broadcastSprites();
                 //this.Monitor.Log($"Showing Frame {j}", LogLevel.Debug); //There are 125 frames
-                Game1.player.currentLocation.characters.Add(jun);
                 //FarmerSprite.AnimationFrame(int frame, int millisecond, int positionOffset, bool secondaryArm, bool flip, endOfAnimationBehavior frameBehavior = null, bool behaviorAtEndOfFrame = false, int xOffset = 0)
             }
 
         }
 
-        //Method that detects when used weapon
+        //Method that detects when used weapon on another player and sends a damage mod message
         private void PlayerUsedTool(object sender, UpdateTickedEventArgs e) {
             if (Game1.player.UsingTool != UsingToolOnPreviousTick) {
                 UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
@@ -131,21 +121,10 @@ namespace SDVMod1
             string message = e.ReadAs<string>();
             this.Monitor.Log($"Damage Message sent to {message}", LogLevel.Debug);
             if(Game1.player.Name == message){
-                Game1.player.health -= 10;
-
+                Damage.HitEmote();
+                this.Monitor.Log($"Received Damage", LogLevel.Debug);
                 //System.Threading.Thread.Sleep(100);
 
-                Junimo jun = new Junimo(new Vector2(Game1.player.getTileX() + Game1.random.Next(-2, 2), Game1.player.getTileY() + Game1.random.Next(-2, 2)) * 64, Game1.random.Next(7));
-                Game1.player.currentLocation.characters.Add(jun);
-                Junimo jun2 = new Junimo(new Vector2(Game1.player.getTileX() + Game1.random.Next(-2, 2), Game1.player.getTileY() + Game1.random.Next(-2, 2)) * 64, Game1.random.Next(7));
-                Game1.player.currentLocation.characters.Add(jun2);
-                Junimo jun3 = new Junimo(new Vector2(Game1.player.getTileX() + Game1.random.Next(-2, 2), Game1.player.getTileY() + Game1.random.Next(-2, 2)) * 64, Game1.random.Next(7));
-                Game1.player.currentLocation.characters.Add(jun3);
-                Junimo jun4 = new Junimo(new Vector2(Game1.player.getTileX() + Game1.random.Next(-2, 2), Game1.player.getTileY() + Game1.random.Next(-2, 2)) * 64, Game1.random.Next(7));
-                Game1.player.currentLocation.characters.Add(jun4);
-
-                this.Monitor.Log($"Received Damage", LogLevel.Debug);
-                
             }
            
             
