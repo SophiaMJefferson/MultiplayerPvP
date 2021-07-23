@@ -14,7 +14,6 @@ namespace SDVMod1
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        //TODO: Remember object oriented programming to implement another class.....
         //TODO: Show sprites to everyone on multiplayer (Multiplayer.broadcastSprites)
         //TODO: Knockback and invincibility on hit
         //TODO: Must face direction of opponent to hit (Bounding box and area of effect implementation perhaps)
@@ -29,6 +28,7 @@ namespace SDVMod1
         static int frametime = 1000; //frametime is unused so far
         //List<TemporaryAnimatedSprite> sprites;
         FarmerDamage Damage = new FarmerDamage(); //used to control what happens when a farmer is damaged.
+        Multiplayer MManager = new Multiplayer();
 
         /*********
         ** Public methods
@@ -75,17 +75,6 @@ namespace SDVMod1
             if (!Context.IsWorldReady)
                 return;
 
-            //Check who is in the farm and add them to an array
-            var players = Game1.getOnlineFarmers();
-            int i = 0;
-            foreach (Farmer player in players)
-            {
-                this.Monitor.Log($"{player.Name} is in game.", LogLevel.Debug);
-                farmarray[i] = player;
-                i++;
-            }
-
-            playernum = i;
             if (e.Button == SButton.N) {
                 Damage.HitEmote();
                 //Game1.multiplayer.broadcastSprites();
@@ -103,9 +92,12 @@ namespace SDVMod1
                 if (Game1.player.UsingTool && (Game1.player.CurrentTool is MeleeWeapon)){ 
                     this.Monitor.Log($"Just used Melee Weapon", LogLevel.Debug);
 
+                    farmarray = MManager.getFarmers();
+                    playernum = MManager.getOnlineNum();
                     for (int i=1; i<playernum;i++) { //iterate though other players online
                         if (Math.Abs(farmarray[i].getTileX() - Game1.player.getTileX()) <= 1 && farmarray[i].currentLocation == Game1.player.currentLocation) //send damage if in same location and within 1 tile
                         {
+                            this.Monitor.Log($"Player {farmarray[i]} is within range.");
                             string message = farmarray[i].Name; //message is the target player
                             this.Helper.Multiplayer.SendMessage(message, "Damage"); 
                             this.Monitor.Log($"Sent Damage.", LogLevel.Debug);
