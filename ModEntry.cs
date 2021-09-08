@@ -13,6 +13,7 @@ using StardewValley.Monsters; //allows greenslime and other monster types
 namespace SDVMod1
 {
     /// <summary>The mod entry point.</summary>
+    /// testing
     public class ModEntry : Mod
     {
         //TODO: Use unique multiplayer id to communicate between players
