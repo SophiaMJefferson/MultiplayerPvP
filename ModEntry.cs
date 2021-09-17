@@ -18,20 +18,20 @@ namespace SDVMod1
     {
         //TODO: Use unique multiplayer id to communicate between players
         //TODO: Knockback on hit
-        //TODO: Must face direction of opponent to hit (Bounding box and area of effect implementation perhaps)
-        //TODO: Fix location bug in farm cabins and mines (maybe do bounding box intersections?)
+        //TODO: Bounding box and area of effect combat implementation
         //TODO: Fix requirement that a button must be pushed to update online players. Update every tick instead.
 
         //There are 125 frames
+
         public static IModHelper Helper { get; private set; }
-        int playernum; //number of online players
-        Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
-        static bool UsingToolOnPreviousTick = false;
-        static bool gameloaded = false;
-        static int frametime = 1000; //frametime is unused so far
         FarmerDamage DamageMan = new FarmerDamage(); //used to control what happens when a farmer is damaged.
         NetworkUtility MManager = new NetworkUtility(); //Manage multiplayer interactions
+        static bool UsingToolOnPreviousTick = false;
+        static bool gameloaded = false;
         MeleeWeapon currWeapon;
+        int playernum; //number of online players
+        Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
+        static int frametime = 1000; //frametime is unused so far
 
         /*********
         ** Public methods
@@ -47,7 +47,6 @@ namespace SDVMod1
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
         }
-
 
         /*********
         ** Private methods
@@ -149,7 +148,7 @@ namespace SDVMod1
                         this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
                         this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
                         this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
-                        this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
+                        this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug); 
                     }
                 }
                 catch (InvalidCastException exception)
