@@ -19,7 +19,7 @@ public class FarmerDamage
 	public FarmerDamage() {
 	}
 
-	//testing
+	//TODO: implement bounding box implementation here.
 
 	//called by attacker to see if damages another farmer
 	//Farmer, rectangle -> bool

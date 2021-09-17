@@ -29,11 +29,9 @@ namespace SDVMod1
         static bool UsingToolOnPreviousTick = false;
         static bool gameloaded = false;
         static int frametime = 1000; //frametime is unused so far
-        //List<TemporaryAnimatedSprite> sprites;
         FarmerDamage DamageMan = new FarmerDamage(); //used to control what happens when a farmer is damaged.
         NetworkUtility MManager = new NetworkUtility(); //Manage multiplayer interactions
         MeleeWeapon currWeapon;
-        //RockCrab damager = new RockCrab();
 
         /*********
         ** Public methods
@@ -120,6 +118,7 @@ namespace SDVMod1
 
         }
 
+        //TODO experimentation for Bounding-Box implementation
         //When swing weapon check for area of effect intersection with opponent bounding box, then call send damage method
 
         //Method that detects when used weapon on another player and sends a damage mod message (antiquated)
