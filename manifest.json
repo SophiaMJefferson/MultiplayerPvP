@@ -1,10 +1,10 @@
 {
-    "Name": "SDVMod1",
+    "Name": "MultiplayerPvp",
     "Author": "Maude",
     "Version": "1.0.0",
     "Description": "This is a test mod for Stardew Valley",
-    "UniqueID": "Maude.SDVMod1",
-    "EntryDll": "SDVMod1.dll",
+    "UniqueID": "Maude.MultiplayerPvp",
+    "EntryDll": "MultiplayerPvp.dll",
     "MinimumApiVersion": "3.0.0",
     "UpdateKeys": []
 }
