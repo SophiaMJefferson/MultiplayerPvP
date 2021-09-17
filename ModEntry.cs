@@ -10,7 +10,7 @@ using System.Collections.Generic; //enables the List type
 using StardewValley.Monsters; //allows greenslime and other monster types
 
 
-namespace SDVMod1
+namespace MultiplayerPvP
 {
     /// <summary>The mod entry point.</summary>
     /// testing

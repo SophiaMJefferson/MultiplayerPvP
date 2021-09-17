@@ -8,7 +8,7 @@ using StardewValley.Tools; //enables referencing of Axe and Sword etc
 using StardewValley.Characters; //enables junimo type
 using System.Collections.Generic; //enables the List type
 using StardewValley.Monsters; //allows greenslime and other monster types
-using SDVMod1;//allows me to access other files in the solution
+using MultiplayerPvP;//allows me to access other files in the solution
 
 public class FarmerDamage	
 {

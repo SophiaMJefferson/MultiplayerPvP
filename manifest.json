@@ -4,7 +4,7 @@
     "Version": "1.0.0",
     "Description": "This is a test mod for Stardew Valley",
     "UniqueID": "Maude.MultiplayerPvp",
-    "EntryDll": "MultiplayerPvp.dll",
+    "EntryDll": "MultiplayerPvP.dll",
     "MinimumApiVersion": "3.0.0",
     "UpdateKeys": []
 }
