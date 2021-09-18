@@ -21,7 +21,6 @@ namespace MultiplayerPvP
         //TODO: Bounding box and area of effect combat implementation
         //TODO: Fix requirement that a button must be pushed to update online players. Update every tick instead.
 
-        //There are 125 frames
 
         public static IModHelper Helper { get; private set; }
         FarmerDamage DamageMan = new FarmerDamage(); //used to control what happens when a farmer is damaged.
