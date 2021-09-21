@@ -34,6 +34,7 @@ namespace MultiplayerPvP
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static int frametime = 1000; //frametime is unused so far
         SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
+        PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
 
         /*********
         ** Public methods
@@ -60,18 +61,27 @@ namespace MultiplayerPvP
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
 
         //every time a new scene is loaded this top square persists, next use to render AOE and BB
-        private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() { 
+        private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() {
             //int width = pp.BackBufferWidth;
-			//int height = pp.BackBufferHeight;
-            PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
-		    SurfaceFormat format = pp.BackBufferFormat;
+            //int height = pp.BackBufferHeight;
+            SurfaceFormat format = pp.BackBufferFormat;
             RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
             this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-			this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
+            this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
 			this.spriteBatch.End();
             return null;
         }
 
+        //For debugging, draw AOE and BB
+        private void DrawIntersection(Rectangle areaofeffect, Farmer who) {
+            int width = who.GetBoundingBox().Width;
+            int height = who.GetBoundingBox().Height;
+            SurfaceFormat format = pp.BackBufferFormat;
+            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            this.spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
+            this.spriteBatch.End();
+        }
 
         private void OnSaveLoaded() {
             gameloaded = true;
@@ -83,7 +93,6 @@ namespace MultiplayerPvP
                 frametime -= 100;
             }
         }
-
                                                                                                                      
         //Raised after player makes a change to their inventory.
         private void Player_InventoryChanged(object sender, InventoryChangedEventArgs e)
@@ -167,7 +176,8 @@ namespace MultiplayerPvP
                         this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
                         this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
                         this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
-                        this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug); 
+                        this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
+                        DrawIntersection(areaOfEffect, i); //testing draw bounding box
                     }
                 }
                 catch (InvalidCastException exception)
