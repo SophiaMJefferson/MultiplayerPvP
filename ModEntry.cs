@@ -76,10 +76,12 @@ namespace MultiplayerPvP
         private void DrawIntersection(Rectangle areaofeffect, Farmer who) {
             int width = who.GetBoundingBox().Width;
             int height = who.GetBoundingBox().Height;
+            int x = who.GetBoundingBox().X;
+            int y = who.GetBoundingBox().Y;
             SurfaceFormat format = pp.BackBufferFormat;
             RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
             this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            this.spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
+            this.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White); 
             this.spriteBatch.End();
         }
 
