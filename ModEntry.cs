@@ -8,6 +8,8 @@ using StardewValley.Tools; //enables referencing of Axe and Sword etc
 using StardewValley.Characters; //enables junimo type
 using System.Collections.Generic; //enables the List type
 using StardewValley.Monsters; //allows greenslime and other monster types
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace MultiplayerPvP
@@ -28,9 +30,10 @@ namespace MultiplayerPvP
         static bool UsingToolOnPreviousTick = false;
         static bool gameloaded = false;
         MeleeWeapon currWeapon;
-        int playernum; //number of online players
+        //int playernum; //number of online players
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static int frametime = 1000; //frametime is unused so far
+        SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
 
         /*********
         ** Public methods
@@ -45,6 +48,7 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.UpdateTicked += (o,e) => UpdateTime(Game1.currentGameTime);
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
+            helper.Events.Display.Rendered += (o,e) => OnRendered();
         }
 
         /*********
@@ -54,6 +58,21 @@ namespace MultiplayerPvP
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
+
+        //every time a new scene is loaded this top square persists, next use to render AOE and BB
+        private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() { 
+            //int width = pp.BackBufferWidth;
+			//int height = pp.BackBufferHeight;
+            PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
+		    SurfaceFormat format = pp.BackBufferFormat;
+            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+			this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
+			this.spriteBatch.End();
+            return null;
+        }
+
+
         private void OnSaveLoaded() {
             gameloaded = true;
         }
@@ -64,6 +83,7 @@ namespace MultiplayerPvP
                 frametime -= 100;
             }
         }
+
                                                                                                                      
         //Raised after player makes a change to their inventory.
         private void Player_InventoryChanged(object sender, InventoryChangedEventArgs e)
