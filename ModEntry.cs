@@ -64,16 +64,16 @@ namespace MultiplayerPvP
         private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() {
             //int width = pp.BackBufferWidth;
             //int height = pp.BackBufferHeight;
-            SurfaceFormat format = pp.BackBufferFormat;
-            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
-			this.spriteBatch.End();
+            //SurfaceFormat format = pp.BackBufferFormat;
+            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            //this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            //this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
+			//this.spriteBatch.End();
             return null;
         }
 
-        //For debugging, draw AOE and BB
-        private void DrawIntersection(Rectangle areaofeffect, Farmer who) {
+        //For debugging, draw BB
+        private void DrawIntersection(Farmer who) {
             int width = who.GetBoundingBox().Width;
             int height = who.GetBoundingBox().Height;
             int x = who.GetBoundingBox().X;
@@ -83,6 +83,7 @@ namespace MultiplayerPvP
             this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
             this.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White); 
             this.spriteBatch.End();
+            //need to find a better texture
         }
 
         private void OnSaveLoaded() {
@@ -114,9 +115,11 @@ namespace MultiplayerPvP
                 try //try to cast current item to type meleeweapon if possible
                 {
                     //calculate damage to give to player
-                    currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
+                    SurfaceFormat format = pp.BackBufferFormat;
+                    RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None); currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
                     this.Monitor.Log($"Calculated damage: {DamageMan.CalcDamage(currWeapon, Game1.player, Game1.player)}", LogLevel.Debug);
-
+                    DrawIntersection(Game1.player);//draw bouding box on button n pressed
+                    this.Monitor.Log($"Drew Bounding Box", LogLevel.Debug);
                     //testing features
                     //Vector2 tileLocation1 = Vector2.Zero; //never used after this?
                     //Vector2 tileLocation2 = Vector2.Zero; //never used after this?
@@ -179,7 +182,7 @@ namespace MultiplayerPvP
                         this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
                         this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
                         this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
-                        DrawIntersection(areaOfEffect, i); //testing draw bounding box
+                        //DrawIntersection(areaOfEffect, i); //testing draw bounding box when farmer hit
                     }
                 }
                 catch (InvalidCastException exception)
