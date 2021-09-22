@@ -30,11 +30,15 @@ namespace MultiplayerPvP
         static bool UsingToolOnPreviousTick = false;
         static bool gameloaded = false;
         MeleeWeapon currWeapon;
-        //int playernum; //number of online players
+        //int playernum; //number of online playersS
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static int frametime = 1000; //frametime is unused so far
-        SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
+
+        //SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
         PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
+
+        Texture2D whitepixel = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+        //whitepixel.SetData(new[] { Color.White });
 
         /*********
         ** Public methods
@@ -49,7 +53,9 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.UpdateTicked += (o,e) => UpdateTime(Game1.currentGameTime);
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
-            helper.Events.Display.Rendered += (o,e) => OnRendered();
+            helper.Events.Display.Rendering += (_, e) => {
+                // e.SpriteBatch is the spritebatch here
+            };
         }
 
         /*********
@@ -62,13 +68,17 @@ namespace MultiplayerPvP
 
         //every time a new scene is loaded this top square persists, next use to render AOE and BB
         private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() {
-            //int width = pp.BackBufferWidth;
-            //int height = pp.BackBufferHeight;
-            //SurfaceFormat format = pp.BackBufferFormat;
-            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            //this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            //this.spriteBatch.Draw(texture, new Rectangle(0, 0, 100, 100), Color.White);
-			//this.spriteBatch.End();
+            int width = who.GetBoundingBox().Width;
+            int height = who.GetBoundingBox().Height;
+            int x = who.GetBoundingBox().X;
+            int y = who.GetBoundingBox().Y;
+
+            SurfaceFormat format = pp.BackBufferFormat;
+            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
+            //e.SpriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
+            e.spriteBatch.End();
             return null;
         }
 
@@ -78,11 +88,14 @@ namespace MultiplayerPvP
             int height = who.GetBoundingBox().Height;
             int x = who.GetBoundingBox().X;
             int y = who.GetBoundingBox().Y;
+
             SurfaceFormat format = pp.BackBufferFormat;
             RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            this.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White); 
-            this.spriteBatch.End();
+            e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
+            //e.SpriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
+            e.spriteBatch.End();
+
             //need to find a better texture
         }
 
@@ -143,7 +156,7 @@ namespace MultiplayerPvP
                 }
                 catch (InvalidCastException exception)
                 {
-                    DamageMan.Damaged(0,false); //no damage is given to player
+                    //DamageMan.Damaged(0,false); //no damage is given to player
                     this.Monitor.Log($"Caught {exception}",LogLevel.Debug);
                 }
             }
