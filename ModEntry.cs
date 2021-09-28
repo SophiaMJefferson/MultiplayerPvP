@@ -33,11 +33,12 @@ namespace MultiplayerPvP
         //int playernum; //number of online playersS
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static int frametime = 1000; //frametime is unused so far
+        public Texture2D WhitePixel => new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
 
         //SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
-        PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
+        //PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
 
-        Texture2D whitepixel = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+        //Texture2D whitepixel = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
         //whitepixel.SetData(new[] { Color.White });
 
         /*********
@@ -53,8 +54,25 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.UpdateTicked += (o,e) => UpdateTime(Game1.currentGameTime);
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
-            helper.Events.Display.Rendering += (_, e) => {
-                // e.SpriteBatch is the spritebatch here
+            helper.Events.Display.Rendering += (_, e) =>
+            {
+                int width = 5;
+                //who.GetBoundingBox().Width;
+                int height = 10;
+                //who.GetBoundingBox().Height;
+                int x = 0;
+                //who.GetBoundingBox().X;
+                int y = 0;
+                //who.GetBoundingBox().Y;
+
+                
+        //SurfaceFormat format = pp.BackBufferFormat;
+        //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+                e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+                //e.SpriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
+                e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(x, y, width, height), null, new Color(0, 0, 0, 0.25F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
+                e.SpriteBatch.End();
+
             };
         }
 
@@ -68,17 +86,17 @@ namespace MultiplayerPvP
 
         //every time a new scene is loaded this top square persists, next use to render AOE and BB
         private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() {
-            int width = who.GetBoundingBox().Width;
-            int height = who.GetBoundingBox().Height;
-            int x = who.GetBoundingBox().X;
-            int y = who.GetBoundingBox().Y;
+            //int width = who.GetBoundingBox().Width;
+            //int height = who.GetBoundingBox().Height;
+            //int x = who.GetBoundingBox().X;
+            //int y = who.GetBoundingBox().Y;
 
-            SurfaceFormat format = pp.BackBufferFormat;
-            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
+            //SurfaceFormat format = pp.BackBufferFormat;
+            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            //e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            //e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
             //e.SpriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
-            e.spriteBatch.End();
+            //e.spriteBatch.End();
             return null;
         }
 
@@ -89,12 +107,12 @@ namespace MultiplayerPvP
             int x = who.GetBoundingBox().X;
             int y = who.GetBoundingBox().Y;
 
-            SurfaceFormat format = pp.BackBufferFormat;
-            RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
-            //e.SpriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
-            e.spriteBatch.End();
+            //SurfaceFormat format = pp.BackBufferFormat;
+            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
+            //e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+            //e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
+            //e.spriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
+            //e.spriteBatch.End();
 
             //need to find a better texture
         }
@@ -128,8 +146,8 @@ namespace MultiplayerPvP
                 try //try to cast current item to type meleeweapon if possible
                 {
                     //calculate damage to give to player
-                    SurfaceFormat format = pp.BackBufferFormat;
-                    RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None); currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
+                    //SurfaceFormat format = pp.BackBufferFormat;
+                    //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None); currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
                     this.Monitor.Log($"Calculated damage: {DamageMan.CalcDamage(currWeapon, Game1.player, Game1.player)}", LogLevel.Debug);
                     DrawIntersection(Game1.player);//draw bouding box on button n pressed
                     this.Monitor.Log($"Drew Bounding Box", LogLevel.Debug);
