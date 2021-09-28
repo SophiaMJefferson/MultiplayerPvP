@@ -35,14 +35,8 @@ namespace MultiplayerPvP
         static int frametime = 1000; //frametime is unused so far
         public Texture2D WhitePixel => new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
 
-        //SpriteBatch spriteBatch = new SpriteBatch(GameRunner.instance.GraphicsDevice);
-        //PresentationParameters pp = GameRunner.instance.GraphicsDevice.PresentationParameters;
-
-        //Texture2D whitepixel = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
-        //whitepixel.SetData(new[] { Color.White });
-
-        /*********
-        ** Public methods
+        /********* 
+        ** Public methods  
         *********/
         // The mod entry point, called after the mod is first loaded.
         public override void Entry(IModHelper helper)
@@ -65,9 +59,6 @@ namespace MultiplayerPvP
                 int y = 0;
                 //who.GetBoundingBox().Y;
 
-                
-        //SurfaceFormat format = pp.BackBufferFormat;
-        //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
                 e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
                 //e.SpriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
                 e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(x, y, width, height), null, new Color(0, 0, 0, 0.25F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
@@ -83,22 +74,6 @@ namespace MultiplayerPvP
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
-
-        //every time a new scene is loaded this top square persists, next use to render AOE and BB
-        private System.EventHandler<StardewModdingAPI.Events.RenderedEventArgs> OnRendered() {
-            //int width = who.GetBoundingBox().Width;
-            //int height = who.GetBoundingBox().Height;
-            //int x = who.GetBoundingBox().X;
-            //int y = who.GetBoundingBox().Y;
-
-            //SurfaceFormat format = pp.BackBufferFormat;
-            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            //e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            //e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
-            //e.SpriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
-            //e.spriteBatch.End();
-            return null;
-        }
 
         //For debugging, draw BB
         private void DrawIntersection(Farmer who) {
@@ -146,11 +121,10 @@ namespace MultiplayerPvP
                 try //try to cast current item to type meleeweapon if possible
                 {
                     //calculate damage to give to player
-                    //SurfaceFormat format = pp.BackBufferFormat;
-                    //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None); currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
                     this.Monitor.Log($"Calculated damage: {DamageMan.CalcDamage(currWeapon, Game1.player, Game1.player)}", LogLevel.Debug);
                     DrawIntersection(Game1.player);//draw bouding box on button n pressed
                     this.Monitor.Log($"Drew Bounding Box", LogLevel.Debug);
+
                     //testing features
                     //Vector2 tileLocation1 = Vector2.Zero; //never used after this?
                     //Vector2 tileLocation2 = Vector2.Zero; //never used after this?
