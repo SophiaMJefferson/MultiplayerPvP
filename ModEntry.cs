@@ -23,6 +23,8 @@ namespace MultiplayerPvP
         //TODO: Bounding box and area of effect combat implementation
         //TODO: Fix requirement that a button must be pushed to update online players. Update every tick instead.
 
+        //bounding box x+256, y-56
+
 
         public static IModHelper Helper { get; private set; }
         FarmerDamage DamageMan = new FarmerDamage(); //used to control what happens when a farmer is damaged.
@@ -50,7 +52,7 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.UpdateTicked += (o,e) => UpdateTime(Game1.currentGameTime);
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
-            helper.Events.Display.Rendered += (_, e) =>
+            helper.Events.Display.Rendered += (_, e) => //For debugging only
             {
                 int bwidth = Game1.player.GetBoundingBox().Width;
                 int bheight = Game1.player.GetBoundingBox().Height;
@@ -70,7 +72,6 @@ namespace MultiplayerPvP
                     e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(bx, by, bwidth, bheight), null, new Color(1, 1, 1, 0.90F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
                     e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(ax, ay, awidth, aheight), null, new Color(1, 2, 1, 0.90F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
                 }
-                //this.Monitor.Log($"Drew white pixel", LogLevel.Debug);
             };
         }
 
@@ -82,7 +83,7 @@ namespace MultiplayerPvP
         /// <param name="e">The event data.</param>
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
 
-        //For debugging, draw BB
+        //check if tool is weapon and print debug info to monitor, also fetches AOE
         private Rectangle UsingWeapon() {
             try //try to cast current item to type meleeweapon if possible
             {
@@ -148,29 +149,7 @@ namespace MultiplayerPvP
                 {
                     //calculate damage to give to player
                     this.Monitor.Log($"Calculated damage: {DamageMan.CalcDamage(currWeapon, Game1.player, Game1.player)}", LogLevel.Debug);
-                    //DrawIntersection(Game1.player);//draw bouding box on button n pressed
-                    this.Monitor.Log($"Drew Bounding Box", LogLevel.Debug);
 
-                    //testing features
-                    //Vector2 tileLocation1 = Vector2.Zero; //never used after this?
-                    //Vector2 tileLocation2 = Vector2.Zero; //never used after this?
-                    //Farmer lastUser = currWeapon.getLastFarmerToUse();
-                    //Vector2 usedOnTile = lastUser.GetToolLocation() / 64f;
-                    //Rectangle areaOfEffect = currWeapon.getAreaOfEffect((int)usedOnTile.X, (int)usedOnTile.Y, lastUser.facingDirection, ref tileLocation1, ref tileLocation2, lastUser.GetBoundingBox(), lastUser.FarmerSprite.currentAnimationIndex);
-                    //Rectangle areaOfEffect = currWeapon.getAreaOfEffect(1, 1, Game1.player.facingDirection, ref tileLocation1, ref tileLocation2, Game1.player.GetBoundingBox(), Game1.player.FarmerSprite.currentAnimationIndex);
-                    //this.Monitor.Log($"Intersection =  {DamageMan.DamageFromHitbox(Game1.player, areaOfEffect)}", LogLevel.Debug);
-                    //Farmer lastUser = Game1.player;
-                    //Vector2 v = lastUser.getUniformPositionAwayFromBox(lastUser.FacingDirection, 48);
-                    //currWeapon.DoDamage(Game1.currentLocation, (int)v.X, (int)v.Y, lastUser.FacingDirection, 1, lastUser);
-
-                    //check intersection
-                    //bring intersection = true/false for each online farmer
-                    //foreach (Farmer i in Game1.getOnlineFarmers()) {
-                    //    this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
-                    //    this.Monitor.Log($"Player Bounding Box: {Game1.player.GetBoundingBox()}", LogLevel.Debug);
-                    //    this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
-                    //    this.Monitor.Log($"Intersection =  {DamageMan.DamageFromHitbox(i, areaOfEffect)}", LogLevel.Debug);
-                    //}
                 }
                 catch (InvalidCastException exception)
                 {
