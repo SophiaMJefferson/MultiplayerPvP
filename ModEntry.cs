@@ -33,7 +33,9 @@ namespace MultiplayerPvP
         //int playernum; //number of online playersS
         Farmer[] farmarray = new Farmer[4]; //array of online players (Could use .getOnlineFarmers() I think)
         static int frametime = 1000; //frametime is unused so far
-        public Texture2D WhitePixel => new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+        public Texture2D WhitePixel;
+        public Rectangle areaOfEffect;
+
 
         /********* 
         ** Public methods  
@@ -48,22 +50,27 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.UpdateTicked += (o,e) => UpdateTime(Game1.currentGameTime);
             helper.Events.GameLoop.UpdateTicked += this.PlayerUsedTool;
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
-            helper.Events.Display.Rendering += (_, e) =>
+            helper.Events.Display.Rendered += (_, e) =>
             {
-                int width = 5;
-                //who.GetBoundingBox().Width;
-                int height = 10;
-                //who.GetBoundingBox().Height;
-                int x = 0;
-                //who.GetBoundingBox().X;
-                int y = 0;
-                //who.GetBoundingBox().Y;
+                int bwidth = Game1.player.GetBoundingBox().Width;
+                int bheight = Game1.player.GetBoundingBox().Height;
+                int bx = Game1.player.GetBoundingBox().X + 256;
+                int by = Game1.player.GetBoundingBox().Y - 56;
 
-                e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
+                Rectangle aoe = UsingWeapon();
+                int awidth = aoe.Width;
+                int aheight = aoe.Height;
+                int ax = aoe.X;
+                int ay = aoe.Y;
+
+
                 //e.SpriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
-                e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(x, y, width, height), null, new Color(0, 0, 0, 0.25F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
-                e.SpriteBatch.End();
-
+                if (gameloaded)
+                {
+                    e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(bx, by, bwidth, bheight), null, new Color(1, 1, 1, 0.90F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
+                    e.SpriteBatch.Draw(this.WhitePixel, new Rectangle(ax, ay, awidth, aheight), null, new Color(1, 2, 1, 0.90F), 0f, Vector2.Zero, SpriteEffects.None, 0.85F);
+                }
+                //this.Monitor.Log($"Drew white pixel", LogLevel.Debug);
             };
         }
 
@@ -76,24 +83,43 @@ namespace MultiplayerPvP
         /// These are all the methods evoked on response to an event. Every helper method should be implemented in another class
 
         //For debugging, draw BB
-        private void DrawIntersection(Farmer who) {
-            int width = who.GetBoundingBox().Width;
-            int height = who.GetBoundingBox().Height;
-            int x = who.GetBoundingBox().X;
-            int y = who.GetBoundingBox().Y;
+        private Rectangle UsingWeapon() {
+            try //try to cast current item to type meleeweapon if possible
+            {
+                //calculate damage to give to player
+                currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
 
-            //SurfaceFormat format = pp.BackBufferFormat;
-            //RenderTarget2D texture = new RenderTarget2D(GameRunner.instance.GraphicsDevice, 100, 100, mipMap: false, format, DepthFormat.None);
-            //e.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, null, null, null, null);
-            //e.spriteBatch.Draw(texture, new Rectangle(x, y, width, height), Color.White);
-            //e.spriteBatch.Draw(this.whitePixel,new Rectangle((int)boxTopLeft.X, (int)boxTopLeft.Y, (int)boxWidth, (int)boxBottomLeft.Y),null,new Color(0, 0, 0, 0.25F),0f,Vector2.Zero,SpriteEffects.None,0.85F);
-            //e.spriteBatch.End();
+                //testing features
+                Vector2 tileLocation1 = Vector2.Zero; //never used after this?
+                Vector2 tileLocation2 = Vector2.Zero; //never used after this?
+                Farmer lastUser = currWeapon.getLastFarmerToUse();
+                Vector2 usedOnTile = lastUser.GetToolLocation(); // / 64f;
+                areaOfEffect = currWeapon.getAreaOfEffect((int)usedOnTile.X, (int)usedOnTile.Y, lastUser.facingDirection, ref tileLocation1, ref tileLocation2, lastUser.GetBoundingBox(), lastUser.FarmerSprite.currentAnimationIndex);
 
-            //need to find a better texture
+                //check intersection
+                //bring intersection = true/false for each online farmer
+                foreach (Farmer i in Game1.getOnlineFarmers())
+                {
+                    this.Monitor.Log($"Used on tile: {(int)usedOnTile.X},{(int)usedOnTile.Y}", LogLevel.Debug);
+                    this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
+                    this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
+                    this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
+                    this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
+                    //DrawIntersection(areaOfEffect, i); //testing draw bounding box when farmer hit
+                }
+            }
+            catch (InvalidCastException exception)
+            {
+                //DamageMan.Damaged(0, false); //no damage is given to player
+                this.Monitor.Log($"Caught {exception}", LogLevel.Debug);
+            }
+            return areaOfEffect;
         }
 
         private void OnSaveLoaded() {
             gameloaded = true;
+            this.WhitePixel = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+            this.WhitePixel.SetData(new[] { Color.White });
         }
 
         //Used to determine time to show a frame for
@@ -122,7 +148,7 @@ namespace MultiplayerPvP
                 {
                     //calculate damage to give to player
                     this.Monitor.Log($"Calculated damage: {DamageMan.CalcDamage(currWeapon, Game1.player, Game1.player)}", LogLevel.Debug);
-                    DrawIntersection(Game1.player);//draw bouding box on button n pressed
+                    //DrawIntersection(Game1.player);//draw bouding box on button n pressed
                     this.Monitor.Log($"Drew Bounding Box", LogLevel.Debug);
 
                     //testing features
@@ -166,35 +192,7 @@ namespace MultiplayerPvP
                 UsingToolOnPreviousTick = Game1.player.UsingTool; //This happens twice, as it encompasses two ticks
                 this.Monitor.Log($"Just used a tool", LogLevel.Debug);
 
-                try //try to cast current item to type meleeweapon if possible
-                {
-                    //calculate damage to give to player
-                    currWeapon = (MeleeWeapon)Game1.player.CurrentTool;
-
-                    //testing features
-                    Vector2 tileLocation1 = Vector2.Zero; //never used after this?
-                    Vector2 tileLocation2 = Vector2.Zero; //never used after this?
-                    Farmer lastUser = currWeapon.getLastFarmerToUse();
-                    Vector2 usedOnTile = lastUser.GetToolLocation(); // / 64f;
-                    Rectangle areaOfEffect = currWeapon.getAreaOfEffect((int)usedOnTile.X, (int)usedOnTile.Y, lastUser.facingDirection, ref tileLocation1, ref tileLocation2, lastUser.GetBoundingBox(), lastUser.FarmerSprite.currentAnimationIndex);
-
-                    //check intersection
-                    //bring intersection = true/false for each online farmer
-                    foreach (Farmer i in Game1.getOnlineFarmers())
-                    {
-                        this.Monitor.Log($"Used on tile: {(int)usedOnTile.X},{(int)usedOnTile.Y}", LogLevel.Debug);
-                        this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
-                        this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
-                        this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
-                        this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
-                        //DrawIntersection(areaOfEffect, i); //testing draw bounding box when farmer hit
-                    }
-                }
-                catch (InvalidCastException exception)
-                {
-                    //DamageMan.Damaged(0, false); //no damage is given to player
-                    this.Monitor.Log($"Caught {exception}", LogLevel.Debug);
-                }
+                UsingWeapon();
             }
 
         }
