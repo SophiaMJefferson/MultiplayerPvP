@@ -24,6 +24,12 @@ public class FarmerDamage
 	//called by attacker to see if damages another farmer
 	//Farmer, rectangle -> bool
 	public bool DamageFromHitbox(Farmer who, Rectangle areaOfEffect) {
+		//adjust bounding box position
+		int bwidth = Game1.player.GetBoundingBox().Width;
+		int bheight = Game1.player.GetBoundingBox().Height;
+		int bx = Game1.player.GetBoundingBox().X + 256; //x adjustment to match game weirdness
+		int by = Game1.player.GetBoundingBox().Y - 56; //y adjustment
+		Rectangle newBB = new Rectangle(bx, by, bwidth, bheight);
 		return who.GetBoundingBox().Intersects(areaOfEffect);
 	}
 

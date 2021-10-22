@@ -54,11 +54,13 @@ namespace MultiplayerPvP
             helper.Events.GameLoop.SaveLoaded += (o,e) => OnSaveLoaded();
             helper.Events.Display.Rendered += (_, e) => //For debugging only
             {
-                int bwidth = Game1.player.GetBoundingBox().Width;
+                //bounding box is showing up in a weird place, so it's been adjusted
+                int bwidth = Game1.player.GetBoundingBox().Width; 
                 int bheight = Game1.player.GetBoundingBox().Height;
-                int bx = Game1.player.GetBoundingBox().X + 256;
-                int by = Game1.player.GetBoundingBox().Y - 56;
+                int bx = Game1.player.GetBoundingBox().X + 256; //x adjustment to match game weirdness
+                int by = Game1.player.GetBoundingBox().Y - 56; //y adjustment
 
+                //Is AOE in the proper place? 
                 Rectangle aoe = UsingWeapon();
                 int awidth = aoe.Width;
                 int aheight = aoe.Height;
@@ -105,7 +107,7 @@ namespace MultiplayerPvP
                     this.Monitor.Log($"Area of effect: {areaOfEffect}", LogLevel.Debug);
                     this.Monitor.Log($"Player Bounding Box: {i.GetBoundingBox()}", LogLevel.Debug);
                     this.Monitor.Log($"For farmer {i.Name}", LogLevel.Debug);
-                    this.Monitor.Log($"Intersection =  {(i.GetBoundingBox()).Intersects(areaOfEffect)}", LogLevel.Debug);
+                    this.Monitor.Log($"Intersection =  {DamageMan.DamageFromHitbox(i,areaOfEffect)}", LogLevel.Debug);
                     //DrawIntersection(areaOfEffect, i); //testing draw bounding box when farmer hit
                 }
             }
