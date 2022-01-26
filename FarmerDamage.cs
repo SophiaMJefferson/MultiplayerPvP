@@ -10,6 +10,8 @@ using System.Collections.Generic; //enables the List type
 using StardewValley.Monsters; //allows greenslime and other monster types
 using MultiplayerPvP;//allows me to access other files in the solution
 
+//making a test change
+
 public class FarmerDamage	
 {
 	RockCrab damager = new RockCrab(); //use as default farmer damage receiver and dealer
